@@ -1,5 +1,63 @@
 # TPM 2.0 alpine container
 
+##
+
+To build, go to the `alpine` directory, the one with the `Dockerfile`
+
+```sh
+docker build -t tpmcourse .
+```sh
+
+It will then build - if there are warnings then it probably doesn't matter. After it finishes, type:
+
+```sh
+docker images
+```
+
+You then should see something like
+
+```sh
+root@Debian:/home/ian/projects/TPMCourse/alpine# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+tpmcourse    latest    9975934a15d9   2 minutes ago   537MB
+root@Debian:/home/ian/projects/TPMCourse/alpine#
+```
+
+To run, type:
+
+```sh
+docker run -it tpmcourse
+```
+
+You should get output like
+
+```sh
+root@Debian:/home/ian/projects/TPMCourse/alpine# docker run -it tpmcourse
+LIBRARY_COMPATIBILITY_CHECK is ON
+Manufacturing NV state...
+Size of OBJECT = 2600
+Size of components in TPMT_SENSITIVE = 1096
+    TPMI_ALG_PUBLIC                 2
+    TPM2B_AUTH                      66
+    TPM2B_DIGEST                    66
+    TPMU_SENSITIVE_COMPOSITE        962
+Starting ACT thread...
+/ # TPM command server listening on port 2321
+Platform server listening on port 2322
+Command IPv6 client accepted
+Platform IPv6 client accepted
+
+/ # tpm2_getrandom --hex 16
+6822a3e685f5c448b455560d6628a969/ #
+```
+
+Notice at the end I wrote the command `tpm2_getrandom --hex 16`   If this works then you are all good! :-)
+
+
+## Other Stuff - ignore
+
+
+
 NB: Refer to the README.md in the main directory for installation and usage instructions
 
 The base image for the container is **alpine:latest**.

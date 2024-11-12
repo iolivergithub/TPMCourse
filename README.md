@@ -1,4 +1,4 @@
-# Nokia TPM Course
+# TPM Course
 
 This is a short course on getting started with understanding how a TPM 2.0 works. In this course we explain a number of the features of the TPM 2.0 through the TPM2_Tools through examples and, optionally, exercises.
 

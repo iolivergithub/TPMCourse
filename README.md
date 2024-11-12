@@ -15,7 +15,7 @@ Start your install at a terminal window on a linux system.  If you are using a W
 While in your home directory, install the TPMCourse in your linux VM by using git.  The command is
 
 ```bash
-git clone https://github.com/nokia/TPMCourse.git
+git clone https://github.com/iolivergithub/TPMCourse.git
 ```
 
 Git will clone (copy) files from the remote TPMCourse repository on the Nokia github to your linux system.  However, your linux system may not yet have the git tool.  If you don't have it, you will need to install it in order to complete the git clone. (The linux system should tell you how to install it as part of its negative response to your initial attempt.)  

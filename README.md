@@ -56,7 +56,7 @@ sudo docker run -it tpmcourse:latest
 ```
 
 
-The following will be printed out. This tells us that the TPM simulator is runnig on ports 2321 and 2322 and at the end we have a command line prompt. We're running the `ash` command line interpreter.
+The following will be printed out. This tells us that the TPM simulator is running on ports 2321 and 2322 and at the end we have a command line prompt. We're running the `ash` command line interpreter.
 
 ```
 / # LIBRARY_COMPATIBILITY_CHECK is ON

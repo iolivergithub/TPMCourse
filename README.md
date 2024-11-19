@@ -56,7 +56,7 @@ sudo docker run -it tpmcourse:latest
 ```
 
 
-The following will be printed out. This tells us that the TPM simulator is runnig on ports 2321 and 2322 and at the end we have a command line prompt. We're running the `ash` command line interpreter.
+The following will be printed out. This tells us that the TPM simulator is running on ports 2321 and 2322 and at the end we have a command line prompt. We're running the `ash` command line interpreter.
 
 ```
 / # LIBRARY_COMPATIBILITY_CHECK is ON
@@ -76,7 +76,7 @@ Platform IPv4 client accepted
 / # 
 ```
 
-NOTE: sometimes the `#`` prompt doesn't appear...hit enter, the it should.
+NOTE: sometimes the `#`` prompt doesn't appear...hit enter, then it should.
 
 To test type the TPM command `tpm2_getrandom` to obtain a random number:
 
@@ -86,11 +86,11 @@ e0b2c1bb096a81032ec1114cc504795ee77c7cc3d159e76165801b38d892296f
 / # 
 ```
 
-NB: you should get a different random number that we do above!
+NB: you should get a different random number than we do above!
 
 ## Caveats
 
-Firstly, you can run everything here against your own, real, hardware (or firmware) TPM - there are some commands which might be irreperable changes - these are clearly noted. We are NOT responsible for any actions resulting in the bricking or worse of your (or someone else's) computer.
+Firstly, you can run everything here against your own, real, hardware (or firmware) TPM - there are some commands which might be irreparable changes - these are clearly noted. We are NOT responsible for any actions resulting in the bricking or worse of your (or someone else's) computer.
 
 The supplied docker file is the best way to explore things in safety...if you break something you can just restart the container :-)
 

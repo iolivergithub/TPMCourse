@@ -29,7 +29,9 @@ To run, type:
 docker run -it tpmcourse
 ```
 
-You should get output like
+If a prompt does not appear, then hit the enter key a few times - you should get a `#` prompt, meaning that you now have full root access to the container.
+
+Try then running a TPM command, for example,  `tpm2_getrandom --hex 16`, you should then get output as shown below:
 
 ```sh
 root@Debian:/home/ian/projects/TPMCourse/alpine# docker run -it tpmcourse
@@ -47,11 +49,9 @@ Platform server listening on port 2322
 Command IPv6 client accepted
 Platform IPv6 client accepted
 
-/ # tpm2_getrandom --hex 16
-6822a3e685f5c448b455560d6628a969/ #
+/# tpm2_getrandom --hex 16
+6822a3e685f5c448b455560d6628a969
 ```
-
-Notice at the end I wrote the command `tpm2_getrandom --hex 16`   If this works then you are all good! :-)
 
 
 ## Other Stuff - ignore

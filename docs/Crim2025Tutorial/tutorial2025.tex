@@ -1,0 +1,190 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+%\usepackage{parskip}
+\usepackage{url}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{10pt}
+
+\begin{document}
+
+\title{TPM Tutorial Worksheet}
+\author{Ian Oliver\\Crim 2025\\November 13th 2025\\University of Oulu}
+\date{}
+
+\maketitle
+
+\tableofcontents
+
+
+\section{Installation}
+Firstly take note of these instructions:
+\begin{itemize}
+ \item \textbf{READ THE INSTRUCTIONS CAREFULLY}.
+ \item \textbf{WRITE NOTES AS YOU GO ALONG}.
+ \item \textbf{READ THE INSTRUCTIONS CAREFULLY}.
+ \end{itemize}
+
+The course is found at \url{https://github.com/iolivergithub/TPMCourse}. The README file contains the installation instructions carefully and make sure that you have this working before the tutorial.
+
+The docker based installation has been tested in Linux (various Ubuntus and Debians).
+
+If you are running on Windows, Mac or something even more exotic (you mean you don't an IBM zSeries at home?!) then it is probably much easier to build a virtual machine using VirtualBox or some other suitable virtualisatin environment. Download Ubuntu desktop or server as you wish (Desktop has a nice UI!) and install and run it in your VM.
+
+For those of you who can unpick the Dockerfile and figure out how to install everything on a bare-metal Linux box with a real TPM...good luck. If you brick your TPM, corrupt your OS, lose encryption keys or anything else, I did warn you and take \textbf{no responsibility.}
+
+Once you get it working proceed to the exercises in section \ref{theexercises} of this document - it is immediately after this.
+
+
+
+\section{Tutorial and TPM Familiarity}\label{theexercises}
+Read each section carefully and take notes as you go along. If you break your simulated TPM, exit docker and restart. Note, if you had keys or data in that simulated TPM it will be lost on each startup.
+
+Keep a log of each command you run in a separate textfile - easy to copy and paste these back in later and also makes debugging easier and also to review what you have done in the past. 
+
+Finally:
+\begin{center}
+ \Large\textbf{READ THE INSTRUCTIONS CAREFULLY}.\normalsize
+\end{center}
+
+
+\subsection{Basic Commands}
+Follow the tutorial commands outlined in the tutorial in this order. You will find these files under the `docs` director of the downloaded course or directly on the Github pages at \url{https://github.com/nokia/TPMCourse/blob/master/docs/STARTHERE.md}
+
+Take note of the warning in section \ref{commandparameters} below.
+
+Take notes as you go along, \textbf{draw pictures}, keep a log of commands and don't be afraid to restart the simulator if you need and \textbf{read the instructions carefully}.
+
+\begin{itemize}
+\item Random
+\item Objects
+\item Keys  (see section \ref{flush} below)
+\item NVRAM
+\item PCRs
+\item Quoting
+ \begin{itemize}
+   \item Encrypted Communication
+   \item Remote Attestation
+ \end{itemize}
+\end{itemize}
+
+\subsection{Command Parameters}\label{commandparameters}
+Sometimes parameters to commands change - we use the latest TPM2 Tools and sometimes things do change and the course might not be fully updated. In this case, either make an issue in github or make a fork, change and then a pull request - your contributions either way will be very much appreciated.
+
+
+\subsection{TPM Memory and Flush Context}\label{flush}
+This can also be found in the section on key generation, but I will repeat it here. See also \url{https://github.com/iolivergithub/TPMCourse/blob/master/docs/keys.md#tpm-memory}
+
+TPMs have limited space for storing objects such as keys, session information etc. Different manufacturers provide different amounts of space and in some cases even behaviours when dealing with temporary objects. The IBM TPM Simulator used in the Dockerfiles has very limited storage and you'll find objects being left in the transient memory space.
+
+If you receive out of memory errors from the simulator or any TPM then check if there are objects (typically keys) in the transient memory area; for example we can use \texttt{tpm2\_getcap} to display this and in this example we have two objects in the transient area.
+
+\begin{verbatim}
+$tpm2_getcap handles-transient
+0x80000000
+0x80000001
+\end{verbatim}
+
+To remove these objects use the command \texttt{tpm2\_flushcontext -t} and check with \texttt{tpm2\_getcap} again - if nothing is reported then all worked.
+
+\begin{verbatim}
+$tpm2_getcap handles-transient
+0x80000000
+0x80000001
+$tpm2_flushcontext -t
+$tpm2_getcap handles-transient
+\end{verbatim}
+
+\subsection{Communicating with the TPM}
+If you are running against a real TPM, make sure you have access to the device. For example on Linux this means access to /dev/tpm0 and /dev/tpmrm0. In most distributions, and after installing the TPM2 Tools you will need to add your user to the tss group to get access to /dev/tpm0.
+
+If you are running against the TPM simulator, then it is likely you will need to set an environment variable to direct commands to the simulator. Set this \texttt{export TPM2TOOLS\_TCTI="mssim:host=localhost,port=2321"}
+
+You can run the simulator on a machine with a physical TPM too, just set the environment variable above to direct tpm2* commands to the correct place.
+
+\section{Exercises}
+Follow each of these in turn. Refer back to the tutorial section and your notes.
+
+\subsection{Generate Keys}
+Generate an RSA key under one of the hierarchies. I suggest creating a primary key in owner first and then deriving from that.
+
+Using this key encrypt a small amount of data, eg: 16 characters maximum.
+
+Decrypt that data and demonstrate that that the encrypt/decrypt works.
+
+\subsection{Generate and EK and AK}
+The EK is the device's identity in a way. Generate this.
+
+Then geneate an attestation key (AK).
+
+Make both of these persistent at suitable handles.
+
+\subsection{PCRs}\label{pcrs}
+List the PCRs and use \textit{tpm2\_pcrevent} to extend certain some PCRs.  Pick some small files to hash with this command - hashing takes time and the TPM isn't a cryptoaccelerator!
+
+If you can reset the PCRs (something you can't do without a reboot in reality!), reset them and extend the PCRs using the same data but in different order. Compare what you get.
+
+
+\subsection{UEFI EventLog}
+\textbf{You must be running on a Linux machine with UEFI enabled}
+
+Read the UEFI eventlog which can be found at \textit{/sys/kernel/security/tpm0} using \textit{tmp2\_eventlog}. You will need to use sudo and write the output of the command to your home directory or somewhere suitable. Give this file a suitable name - you will need it later. Read it with a text editor.
+
+\begin{itemize}
+ \item What does the event log tell you?  
+ \item How does it relate to the PCRs?
+\end{itemize}
+
+Reboot your machine and enter the UEFI setup page. If you can find something \textit{SAFE} to change, do it. If you are unsure, don't touch anything. Save and Exit and let the machine reboot.
+
+\begin{itemize}
+ \item Read the event log again as above
+ \item Compare it with the early event log you saved (you did this, yes?)
+ \item What has changed
+\end{itemize}
+
+Did any PCRs? change - see section \ref{pcrs}.
+
+\subsection{Quotes}
+Take two quotes of your machine for the same PCRs. Use \textit{tpm2\_print} them. How do their differ?
+
+Suspend your machine, wake it up and take a quote, what has changed?
+
+Reboot your machine and take a quote, what has changed?
+
+\textbf{NB: this following exercise is dangeous and should not be attempted - disk corruption, breaking hardware etc. You have been warned}
+
+Remove the powersupply and pull the battery from your machine if you can. Reboot, take a quote and what does it tell you?
+
+\subsection{Updates}
+Linux has various ways of updating itself, eg: \textit{apt update/upgade, yum etc...} Take quotes, copies of the event log and PCRs \textit{BEFORE} the update. Reboot, and take quotes, eventlog and PCRs again.  What has changed.
+
+Linux has a firmware update mechanism called LVFS and is used via the command \textit{fwupdmgr}. Take quotes, copies of the event log and PCRs \textit{BEFORE} the update. Reboot, and take quotes, eventlog and PCRs again.  What has changed?
+
+
+
+
+\section{Challenges}
+Here are two challenges, the first is easy and the latter is harder - respectively. You should attempt both.
+
+\subsection{Encrypted Communication}
+Make yourself familiar with the idea of asymmetric encryption and utilising private and public keys to encrypt messages.
+
+Start by creating a public/private key pair on your TPM. Distribute the public part to some else to load on their TPM. Encrypt a message utilsing your private key and send it to the recipient to decrypt using your supplied public key.
+
+Now do the same by swapping public keys and sending your message encrypted using both keys so the recipient knows the message came from you and only they can decrypt.
+
+\subsection{Remote Attestation}
+This is HARD and requires installation of a remote attestation server. This task will take a number of hours and for best results requires machines (x86 PCs, Raspberry Pis) with physical TPMs. This will only work on Linux machines.
+
+The software can be found here: \url{https://github.com/iolivergithub/jane}. Docker installations can also be found using the supplied instructions.
+
+You will need to install Tarzan - the trust agent - on the machine with a TPM, create a record for it using Jane and then using the attest and verification functionality to monitor the machine.
+
+
+
+
+
+\end{document}
+
+
